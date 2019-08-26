@@ -1,0 +1,32 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "title" : "VINInquiry",
+    "version" : "1.0.0",
+    "description" : "VINInquiry"
+  },
+  "paths" : {
+    "/inquiry" : {
+      "get" : {
+        "operationId" : "getInquiry",
+        "responses" : {
+          "200" : {
+            "description" : "The operation was successful.",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        },
+        "produces" : [ "application/json" ],
+        "description" : "Retrieve inquiry",
+        "parameters" : [ {
+          "name" : "VIN",
+          "in" : "query",
+          "type" : "string",
+          "required" : true
+        } ]
+      }
+    }
+  },
+  "basePath" : "/vininquiry/v1"
+}
