@@ -19,8 +19,7 @@
 				<artifactId>ace-maven-plugin</artifactId>
 				<version>11.9.6-SNAPSHOT</version>
 				<extensions>true</extensions>
-				
-				
+							
 				<configuration>
 					<toolkitInstallDir>${ace.dir}</toolkitInstallDir>					
 					<barName>${project.build.directory}/ace/${project.artifactId}.bar</barName>
@@ -72,6 +71,6 @@
 		</repository>
 	</distributionManagement>
 	<scm>
-		<connection></connection>
+		<connection>https://github.com/ibm-git-demo-org/iib_git_tutorial.git</connection>
 	</scm>	
 </project>
