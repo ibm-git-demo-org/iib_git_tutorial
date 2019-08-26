@@ -65,9 +65,9 @@
 	</build>
 	<distributionManagement>
 		<repository>
-			<id>nexus-release</id>
+			<id>nexus-snapshots</id>
 			<name>Corporate Repository</name>
-			<url>http://localhost:8081/repository/nexus-release/</url>
+			<url>http://localhost:8081/repository/maven-snapshots/</url>
 			<layout>default</layout>
 		</repository>
 	</distributionManagement>
