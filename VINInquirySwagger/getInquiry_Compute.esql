@@ -1,0 +1,191 @@
+
+
+CREATE COMPUTE MODULE getInquiry_generateVINResponse
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		CALL CopyMessageHeaders();
+		DECLARE VIN CHARACTER;
+		SET VIN = '5FNYF4H59BB052949';
+		
+		DECLARE inpheadref REFERENCE TO InputRoot.JSON.Data.Header;
+		
+		SET OutputRoot.JSON.Data TYPE = JSON.Array; 
+      	CREATE FIELD OutputRoot.JSON.Data.Item IDENTITY (JSON.Object)Item; 
+				
+		-- Header       
+       	CREATE FIELD OutputRoot.JSON.Data.Item[1].Header IDENTITY(JSON.Object)Header;
+       	
+       	DECLARE headref REFERENCE TO OutputRoot.JSON.Data.Item[1].Header;       	      
+       	
+       	SET headref.ReferenceNumber = inpheadref.ReferenceNumber;
+       	SET headref.Brand = inpheadref.Brand;
+       	SET headref.DealerNumber = inpheadref.DealerNumber;
+       	SET headref.UserId = inpheadref.UserId;
+       	SET headref.Department = inpheadref.Department;
+       	       	
+       	-- VINInquiry Payload       			
+		CREATE FIELD OutputRoot.JSON.Data.Item[1].iNMsgRespPayload IDENTITY(JSON.Object)iNMsgRespPayload;
+		
+		DECLARE outref REFERENCE TO OutputRoot.JSON.Data.Item[1].iNMsgRespPayload; 
+		
+		-- Dealer Information
+		CREATE LASTCHILD OF outref as outref NAME 'DealerInformation';
+       	SET outref.Dealer = '909108';
+       	SET outref.Date = CAST(CURRENT_DATE AS CHAR FORMAT 'dd/MM/yyyy');
+       	SET outref.Identification = 'MED0012';
+       			
+		CREATE NEXTSIBLING OF outref as outref NAME  'VINInformation';       			       
+       	SET outref.Item = '1';
+       	SET outref.VIN = '5FNYF4H59BB052949';
+       	SET outref.Description = '';
+       	SET outref.ViewDetail = '';
+       	       	
+		CREATE LASTCHILD OF outref as outref NAME 'VehicleInformation';      	 
+      	SET outref.VIN = '5FNYF4H59BB052949'; 
+      	SET outref.Model = 'PILOT';
+      	SET outref.ModelYear = '2011'; 
+      	SET outref.EngineNo = 'J35Z43092662'; 
+      	SET outref.EmissionType = 'KA';
+      	SET outref.SellingDealer = '206922'; 
+      	SET outref.PDIDealer = '206922';
+      	SET outref.PDIDate = '12/06/2010'; 
+      	SET outref.DemonstratorDate = ''; 
+      	SET outref.DeliveryDate = '12/31/2010';
+      	SET outref.MileageatPurchase = '20';      	 
+		SET outref.DealerName = 'DICK HANNAH HONDA'; 
+		
+		CREATE NEXTSIBLING OF outref as outref NAME 'OwnerInformation';   
+      	SET outref.OriginalOwner = 'HARSH'; 
+      	SET outref.CurrentOwner = 'LIBERATORE'; 
+
+		CREATE NEXTSIBLING OF outref as outref NAME 'FactoryExtendedWarranty';
+		CREATE LASTCHILD OF outref as outref IDENTITY(JSON.Array)FactoryExtensionNoofMiles;
+		SET outref.Item[1].Description1 = '';
+		SET outref.Item[1].Description2 = '';
+		SET outref.Item[1].Description3 = '';		
+      	      	
+      	CREATE NEXTSIBLING OF outref as outref IDENTITY(JSON.Array)FactoryExtensionNoofDay;
+		SET outref.Item[1].Description1 = '';
+		SET outref.Item[1].Description2 = '';
+		SET outref.Item[1].Description3 = '';		
+      	
+      	CREATE NEXTSIBLING OF outref as outref IDENTITY(JSON.Array)FactoryExtensionWarrantyType;
+		SET outref.Item[1].Description1 = '';
+		SET outref.Item[1].Description2 = '';
+		SET outref.Item[1].Description3 = '';		
+      	
+      	CREATE NEXTSIBLING OF outref as outref IDENTITY(JSON.Array)WarrantyCancellationDate;
+		SET outref.Item[1].Description1 = '';
+		SET outref.Item[1].Description2 = '';
+		SET outref.Item[1].Description3 = '';		
+      	      	
+		MOVE outref PARENT;
+					
+		IF (VIN = '5FNYF4H59BB052949')  
+			THEN						
+				CREATE NEXTSIBLING OF outref as outref NAME 'Vehicle Service Contract_Honda Certified Pre-Owned Vehicle';
+				SET outref.VSC = 'NO';
+				SET outref.HCPV = 'NO';
+			ELSE
+				CREATE NEXTSIBLING OF outref as outref NAME 'VehicleServiceContract';      
+				SET outref.CustomerName = '';
+				SET outref.ContractNo = ''; 
+				SET outref.PlanStatus = '';
+				SET outref.EffectiveDate = ''; 
+				SET outref.EffectiveMiles = '';
+				SET outref.Deductible = ''; 
+				SET outref.CoOwnerName = '';
+				SET outref.PlanType = ''; 
+				SET outref.InactiveCancelDate = '';
+				SET outref.ExpirationDate = ''; 
+				SET outref.ExpirationMiles = '';
+				SET outref.RoadsideAssist = ''; 
+		END IF;
+		
+		CREATE NEXTSIBLING OF outref as outref NAME 'OpenCampaign';
+       	SET outref.Description = 'No Open Campaign / Recall Information Available For This Vehicle.';
+       	
+		CREATE NEXTSIBLING OF outref as outref IDENTITY(JSON.Array)ClosedCampaign;
+		SET outref.Item[1].ServiceBulletin = '18-098:6ED00 C';
+		SET outref.Item[1].Description = 'Passenger Airbag Inflator';
+		SET outref.Item[2].ServiceBulletin = '11-059:5PG00 C';
+		SET outref.Item[2].Description = 'SEAT BELT STITCHING';
+		SET outref.Item[3].ServiceBulletin = '13-008:5JZ00 C';
+		SET outref.Item[3].Description = 'DRIVERS AIRBAG MISSING RIVETS';
+
+		CREATE NEXTSIBLING OF outref as outref IDENTITY(JSON.Array)WarrantyExtensionOpenCampaigns;
+		SET outref.Item[1].ServiceBulletin = '19-003:6D200 Warranty Extension: MUST VERIFY';
+		SET outref.Item[1].Description = '10-15 Honda Multi-Model Passenger Airbag Inflator Warranty Exten';
+		SET outref.Item[2].ServiceBulletin = '13-082:5V500 Warranty Extension: MUST VERIFY';
+		SET outref.Item[2].Description = 'VCM2 MISFIRE - FOULED PLUGS';
+      	 
+		CREATE NEXTSIBLING OF outref as outref IDENTITY(JSON.Array)WarrantyExtensionClosedCampaigns;
+		SET outref.Item[1].ServiceBulletin = '15-045:5YH00 C';
+		SET outref.Item[1].Description = 'COMPLIANCE BUSHING LEAK';
+      	 
+		CREATE NEXTSIBLING OF outref as outref IDENTITY(JSON.Array)WarrantyRepairHistory;
+		SET outref.Item[1].RepairDealer = '206922';
+		SET outref.Item[1].PaidDate = '12/05/2011';
+		SET outref.Item[1].RODate = '11/25/2011';
+		SET outref.Item[1].RONo = '739305';
+		SET outref.Item[1].Mileage = '17,041';
+		SET outref.Item[1].PrimaryLaborOp = '8545A2';
+		SET outref.Item[1].DefectCode = '5PG00';
+		SET outref.Item[1].FailedPartNo = '04818-SZA-A00ZA';
+
+		SET outref.Item[2].RepairDealer = '206922';
+		SET outref.Item[2].PaidDate = '09/21/2012';
+		SET outref.Item[2].RODate = '06/23/2012';
+		SET outref.Item[2].RONo = '306056';
+		SET outref.Item[2].Mileage = '27,672';
+		SET outref.Item[2].PrimaryLaborOp = '828150';
+		SET outref.Item[2].DefectCode = '00401';
+		SET outref.Item[2].FailedPartNo = '76400-SZA-A82';
+		
+		SET outref.Item[3].RepairDealer = '206922';
+		SET outref.Item[3].PaidDate = '01/23/2014';
+		SET outref.Item[3].RODate = '01/20/2014';
+		SET outref.Item[3].RONo = '348058';
+		SET outref.Item[3].Mileage = '49,451';
+		SET outref.Item[3].PrimaryLaborOp = '7525A7';
+		SET outref.Item[3].DefectCode = '5JZ00';
+		SET outref.Item[3].FailedPartNo = '77810-SZA-A81ZA';
+
+		SET outref.Item[4].RepairDealer = '206922';
+		SET outref.Item[4].PaidDate = '04/25/2017';
+		SET outref.Item[4].RODate = '04/24/2017';
+		SET outref.Item[4].RONo = '123972';
+		SET outref.Item[4].Mileage = '91,146';
+		SET outref.Item[4].PrimaryLaborOp = '4191J4';
+		SET outref.Item[4].DefectCode = '5YH00';
+		SET outref.Item[4].FailedPartNo = '51350-SZA-A02';
+
+		SET outref.Item[5].RepairDealer = '206922';
+		SET outref.Item[5].PaidDate = '04/29/2019';
+		SET outref.Item[5].RODate = '04/26/2019';
+		SET outref.Item[5].RONo = '189999';
+		SET outref.Item[5].Mileage = '101,242';
+		SET outref.Item[5].PrimaryLaborOp = '7541F9';
+		SET outref.Item[5].DefectCode = '6ED00';
+		SET outref.Item[3].FailedPartNo = '77851-SZA-A12';
+		
+		CREATE NEXTSIBLING OF outref as outref NAME 'Additional Warranty History';
+		SET outref.PDFAttachment = '';
+
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
